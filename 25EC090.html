@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FarmFresh – Organic Product Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 min-h-screen p-6">
+<img src="C:\Users\maha\OneDrive\Desktop\download2.jpeg"</img>
+
+  <h1 class="text-3xl font-bold text-center text-green-800 mb-8">
+    🌾 FarmFresh – Organic Product Store
+  </h1>
+
+  <!-- Default Product List -->
+  <div id="product-list" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"></div>
+
+  <!-- Add New Product -->
+  <div class="max-w-md mx-auto bg-white p-4 rounded-2xl shadow-md mt-4">
+    <h2 class="text-xl font-bold mb-2 text-green-800">Add Your Own Product</h2>
+    <input id="productName" placeholder="Enter product name" class="border p-2 w-full mb-2 rounded-md" />
+    <input id="productPrice" type="number" placeholder="Enter price" class="border p-2 w-full mb-2 rounded-md" />
+    <button onclick="addUserProduct()" class="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 w-full">
+      Add Product to Store
+    </button>
+  </div>
+
+  <!-- Cart Display -->
+  <div class="mt-8 bg-white p-4 rounded-2xl shadow-md max-w-md mx-auto">
+    <h2 class="text-2xl font-bold text-green-800 mb-2">🛒 Your Cart</h2>
+    <div id="cart-output" class="text-gray-700">
+      <p class="text-gray-500">Your cart is empty.</p>
+    </div>
+  </div>
+
+  <script>
+    // Default Products
+    let products = [
+      { id: 1, name: "Organic Apples", price: 120 },
+      { id: 2, name: "Fresh Carrots", price: 80 },
+      { id: 3, name: "Pure Honey", price: 250 },
+      { id: 4, name: "Farm Eggs (12 Pack)", price: 150 },
+    ];
+
+    let cart = [];
+
+    const productList = document.getElementById("product-list");
+    const cartOutput = document.getElementById("cart-output");
+
+    // Display all products
+    function displayProducts() {
+      productList.innerHTML = "";
+      products.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "bg-white shadow-md rounded-2xl p-4 flex flex-col items-center hover:shadow-lg transition";
+        div.innerHTML = `
+          <h2 class="text-lg font-semibold text-green-700">${product.name}</h2>
+          <p class="text-gray-600 mb-3">₹${product.price}</p>
+          <button class="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700">Add to Cart</button>
+        `;
+        div.querySelector("button").addEventListener("click", () => addToCart(product));
+        productList.appendChild(div);
+      });
+    }
+
+    // Add a new product entered by user
+    function addUserProduct() {
+      const name = document.getElementById("productName").value.trim();
+      const price = parseFloat(document.getElementById("productPrice").value);
+
+      if (!name || isNaN(price) || price <= 0) {
+        alert("Please enter a valid product name and price!");
+        return;
+      }
+
+      const newProduct = { id: Date.now(), name, price };
+      products.push(newProduct);  // add to store list
+      displayProducts();          // refresh store
+      addToCart(newProduct);      // also add to cart
+      document.getElementById("productName").value = "";
+      document.getElementById("productPrice").value = "";
+    }
+
+    // Add product to cart
+    function addToCart(product) {
+      cart.push(product);
+      displayCart();
+    }
+
+    // Remove product from cart
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      displayCart();
+    }
+
+    // Display cart items and total
+    function displayCart() {
+      if (cart.length === 0) {
+        cartOutput.innerHTML = "<p class='text-gray-500'>Your cart is empty.</p>";
+        return;
+      }
+
+      let total = 0;
+      let output = "<ul class='list-disc list-inside'>";
+
+      cart.forEach((item, index) => {
+        total += item.price;
+        output += `
+          <li class="flex justify-between items-center mb-1">
+            <span>${item.name} – ₹${item.price}</span>
+            <button class="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600"
+              onclick="removeFromCart(${index})">Remove</button>
+          </li>`;
+      });
+
+      output += `</ul>
+        <p class='mt-2 font-semibold text-green-700'>Total: ₹${total}</p>`;
+      cartOutput.innerHTML = output;
+    }
+
+    // Initial display
+    displayProducts();
+  </script>
+</body>
+</html>
